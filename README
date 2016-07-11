@@ -1,0 +1,8 @@
+FERNET (Fluorescence Emission Recipes and NumErical routines Toolkit)
+=====================================================================
+
+FERNET is a new toolkit designed to simulate the output of a variety of FCS-based techniques in user-defined scenarios. 
+
+This program works in combination with MCell-Blender platform which was designed to treat the reaction-diffusion problem under realistic scenarios. 
+
+The program can be used in standard desktop computers with no special hardware requirements, and it allows the user to define the architecture of the space and reactions among species, opening a wide range of possible simulation scenarios.

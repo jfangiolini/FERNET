@@ -1,0 +1,9 @@
+FERNet needs the following libraries to compile and run:
+	argtable (http://argtable.sourceforge.net/)
+	libconfig (http://www.hyperrealm.com/libconfig/)
+	libtiff (http://www.libtiff.org/)
+	
+To install, type the following commands in the src folder:
+	make
+	sudo make install
+	make clean (optional, cleans temporal files)
