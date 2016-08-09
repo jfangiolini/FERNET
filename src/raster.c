@@ -25,7 +25,7 @@
 /**********************************************************************************
 * Raster mode emission routine
 ***********************************************************************************/
-int imageRoutine(config_t cfg, const char *filename)
+int rasterRoutine(config_t cfg, const char *filename)
 {
     /* Parameters for simulation */
     float x, y, z, prog;
@@ -49,11 +49,11 @@ int imageRoutine(config_t cfg, const char *filename)
     struct commonParms cParms = parseCommon(cfg, fileIn);
 
     /* Get image mode parameters */
-    struct imageParms iParms = parseImage(cfg);
+    struct rasterParms rParms = parseRaster(cfg);
 
     /* Open output files */
     if (cParms.sChannel[0].status == 1) {
-	sprintf(outname[0], "%s_c0.tif", iParms.tiffname);
+	sprintf(outname[0], "%s_c0.tif", rParms.tiffname);
 	tif[0] = TIFFOpen(outname[0], "w");
 	if (tif[0] == NULL) {
 	    fprintf(stderr, "Error opening %s for writing.\n", outname[0]);
@@ -63,7 +63,7 @@ int imageRoutine(config_t cfg, const char *filename)
     }
 
     if (cParms.sChannel[1].status == 1) {
-	sprintf(outname[1], "%s_c1.tif", iParms.tiffname);
+	sprintf(outname[1], "%s_c1.tif", rParms.tiffname);
 	tif[1] = TIFFOpen(outname[1], "w");
 	if (tif[1] == NULL) {
 	    fprintf(stderr, "Error opening %s for writing.\n", outname[1]);
@@ -74,32 +74,32 @@ int imageRoutine(config_t cfg, const char *filename)
 
     /* Write TIFF tags */
     if (cParms.sChannel[0].status == 1) {
-	writeImageTIFFtags(tif[0], iParms.width, iParms.height);
+	writeImageTIFFtags(tif[0], rParms.width, rParms.height);
     }
     if (cParms.sChannel[1].status == 1) {
-	writeImageTIFFtags(tif[1], iParms.width, iParms.height);
+	writeImageTIFFtags(tif[1], rParms.width, rParms.height);
     }
 
     /* Vector with center for each pixel */
-    double centerx[iParms.width], centery[iParms.height];
+    double centerx[rParms.width], centery[rParms.height];
 
-    for (int i = 0; i < iParms.width; i++) {
+    for (int i = 0; i < rParms.width; i++) {
 	centerx[i] =
-	    i * iParms.pixel - (iParms.width - 1) * iParms.pixel / 2;
+	    i * rParms.pixel - (rParms.width - 1) * rParms.pixel / 2;
     }
 
-    for (int i = 0; i < iParms.height; i++) {
+    for (int i = 0; i < rParms.height; i++) {
 	centery[i] =
-	    i * iParms.pixel - (iParms.height - 1) * iParms.pixel / 2;
+	    i * rParms.pixel - (rParms.height - 1) * rParms.pixel / 2;
     }
 
     /* Calculate "dummy" line length */
-    int ndummy = iParms.width + round(iParms.deadtime / cParms.simu_dt);
+    int ndummy = rParms.width + round(rParms.deadtime / cParms.simu_dt);
 
     /* Info about files */
     printLogo();
     printf("\n");
-    printf("%s %s starting in image mode.\n", PROGNAME, VERSION);
+    printf("%s %s starting in raster mode.\n", PROGNAME, VERSION);
     printf("  Reading input file %s\n", filename);
     if (cParms.sChannel[0].status == 1) {
 	printf("  Writing output file %s for channel 0\n", outname[0]);
@@ -113,13 +113,13 @@ int imageRoutine(config_t cfg, const char *filename)
     printf("Parameters recovered from config file: \n");
     printf("  Waist in XY plane (w_xy): %g um\n", cParms.w_xy);
     printf("  Waist in Z plane (w_z): %g um\n", cParms.w_z);
-    printf("  Image width: %0.2f um\n", iParms.width * iParms.pixel);
-    printf("  Image height: %0.2f um\n", iParms.height * iParms.pixel);
-    printf("  Image Z center: %0.2f um\n", iParms.centerz);
-    printf("  Pixel size: %0.3f um\n", iParms.pixel);
+    printf("  Image width: %0.2f um\n", rParms.width * rParms.pixel);
+    printf("  Image height: %0.2f um\n", rParms.height * rParms.pixel);
+    printf("  Image Z center: %0.2f um\n", rParms.centerz);
+    printf("  Pixel size: %0.3f um\n", rParms.pixel);
     printf("  Line time: %0.2f ms\n", 1000 * ndummy * cParms.simu_dt);
     printf("  Frame time: %0.2f s\n",
-	   ndummy * iParms.height * cParms.simu_dt);
+	   ndummy * rParms.height * cParms.simu_dt);
     printf("\n");
 
     if (cParms.sChannel[0].status == 1) {
@@ -152,13 +152,13 @@ int imageRoutine(config_t cfg, const char *filename)
     printf("\n");
 
     /* Photon emission routine */
-    char buf_row[2][iParms.width];
+    char buf_row[2][rParms.width];
 
     while (fscanf(fileIn, "%s %f %f %f\n", molname, &x, &y, &z) != EOF) {
 	if (x == 100) {
 	    prog = 100 * (y / z);
 	    printf("Progress: %0.1f%%\r", prog);
-	    if ((int) y % ndummy < iParms.width) {
+	    if ((int) y % ndummy < rParms.width) {
 		if (cParms.sChannel[0].status == 1) {
 		    buf_row[0][column] = nphot[0];
 		    nphot[0] = 0;
@@ -168,7 +168,7 @@ int imageRoutine(config_t cfg, const char *filename)
 		    nphot[1] = 0;
 		}
 
-		if (column == iParms.width - 1) {
+		if (column == rParms.width - 1) {
 		    if (cParms.sChannel[0].status == 1) {
 			TIFFWriteScanline(tif[0], buf_row[0], row, 0);
 		    }
@@ -177,16 +177,16 @@ int imageRoutine(config_t cfg, const char *filename)
 		    }
 		    column = 0;
 
-		    if (row == iParms.height - 1) {
+		    if (row == rParms.height - 1) {
 			if (cParms.sChannel[0].status == 1) {
 			    TIFFWriteDirectory(tif[0]);
-			    writeImageTIFFtags(tif[0], iParms.width,
-					       iParms.height);
+			    writeImageTIFFtags(tif[0], rParms.width,
+					       rParms.height);
 			}
 			if (cParms.sChannel[1].status == 1) {
 			    TIFFWriteDirectory(tif[1]);
-			    writeImageTIFFtags(tif[1], iParms.width,
-					       iParms.height);
+			    writeImageTIFFtags(tif[1], rParms.width,
+					       rParms.height);
 			}
 			row = 0;
 		    } else {
@@ -210,7 +210,7 @@ int imageRoutine(config_t cfg, const char *filename)
 			nphot[0] +=
 			    gaussPSF(x, y, z, cParms.w_xy, cParms.w_z,
 				     centerx[column], centery[row],
-				     iParms.centerz, cParms.nevents,
+				     rParms.centerz, cParms.nevents,
 				     cParms.sChannel[0].q[i]);
 		    }
 		}
@@ -222,7 +222,7 @@ int imageRoutine(config_t cfg, const char *filename)
 			nphot[1] +=
 			    gaussPSF(x, y, z, cParms.w_xy, cParms.w_z,
 				     centerx[column], centery[row],
-				     iParms.centerz, cParms.nevents,
+				     rParms.centerz, cParms.nevents,
 				     cParms.sChannel[1].q[i]);
 		    }
 		}
