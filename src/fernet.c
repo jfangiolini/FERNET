@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
 	desired_mode = MULTI;
     } else if (!strcmp(Args.mode, "line")) {
 	desired_mode = LINE;
-    } else if (!strcmp(Args.mode, "image")) {
-	desired_mode = IMAGE;
+    } else if (!strcmp(Args.mode, "raster")) {
+	desired_mode = RASTER;
     } else if (!strcmp(Args.mode, "stack")) {
 	desired_mode = STACK;
     } else if (!strcmp(Args.mode, "spim")) {
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
 	lineRoutine(Args.cfg, Args.filename);
 	break;
 
-    case IMAGE:
-	imageRoutine(Args.cfg, Args.filename);
+    case RASTER:
+	rasterRoutine(Args.cfg, Args.filename);
 	break;
 
     case STACK:
@@ -112,4 +112,5 @@ void printLogo()
     printf("  ██║     ███████╗██║  ██║██║ ╚████║███████╗   ██║   \n");
     printf("  ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   \n");
     printf("                                                     \n");
+    printf(" Fluorescence Emission Recipes and NumErical Toolkit \n");
 }

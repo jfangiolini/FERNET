@@ -210,44 +210,44 @@ struct lineParms parseLine(config_t cfg)
  * Parse raster mode parameters from config file
  ***********************************************************************************/
 
-struct imageParms parseImage(config_t cfg)
+struct rasterParms parseRaster(config_t cfg)
 {
-    struct imageParms iParms;
+    struct rasterParms rParms;
 
-    /* Get specific parameters for image mode */
-    config_setting_t *image = config_lookup(&cfg, "image");
+    /* Get specific parameters for raster mode */
+    config_setting_t *raster = config_lookup(&cfg, "raster");
 
     /* Get z center */
-    if (!config_setting_lookup_float(image, "centerz", &iParms.centerz)) {
+    if (!config_setting_lookup_float(raster, "centerz", &rParms.centerz)) {
 	parseError("centerz");
     }
 
     /* Get pixel size */
-    if (!config_setting_lookup_float(image, "pixel", &iParms.pixel)) {
+    if (!config_setting_lookup_float(raster, "pixel", &rParms.pixel)) {
 	parseError("pixel");
     }
 
     /* Get width */
-    if (!config_setting_lookup_int(image, "width", &iParms.width)) {
+    if (!config_setting_lookup_int(raster, "width", &rParms.width)) {
 	parseError("width");
     }
 
     /* Get height */
-    if (!config_setting_lookup_int(image, "height", &iParms.height)) {
+    if (!config_setting_lookup_int(raster, "height", &rParms.height)) {
 	parseError("height");
     }
 
     /* Get output name */
-    if (!config_setting_lookup_string(image, "tiffname", &iParms.tiffname)) {
+    if (!config_setting_lookup_string(raster, "tiffname", &rParms.tiffname)) {
 	parseError("tiffname");
     }
 
     /* Get dead time */
-    if (!config_setting_lookup_float(image, "deadtime", &iParms.deadtime)) {
+    if (!config_setting_lookup_float(raster, "deadtime", &rParms.deadtime)) {
 	parseError("linetime");
     }
 
-    return iParms;
+    return rParms;
 }
 
 /***********************************************************************************

@@ -48,7 +48,7 @@
 int pointRoutine(config_t, const char *);	// Point mode emission routine
 int multiRoutine(config_t, const char *);	// Multi point mode emission routine
 int lineRoutine(config_t, const char *);	// Linescan mode emission routine
-int imageRoutine(config_t, const char *);	// Raster mode emission routine
+int rasterRoutine(config_t, const char *);	// Raster mode emission routine
 int stackRoutine(config_t, const char *);	// 3D stack emission routine
 int spimRoutine(config_t, const char *);	// SPIM emission routine
 int orbitRoutine(config_t, const char *);	// Orbital scanning emission routine
@@ -62,7 +62,7 @@ struct commonParms parseCommon(config_t, FILE *);	// Parse common parameters fro
 struct pointParms parsePoint(config_t);	// Parse point mode parameters from config file
 struct multiParms parseMulti(config_t);	// Parse multi point mode parameters from config file
 struct lineParms parseLine(config_t);	// Parse linescan mode parameters from config file
-struct imageParms parseImage(config_t);	// Parse raster mode parameters from config file
+struct rasterParms parseRaster(config_t);	// Parse raster mode parameters from config file
 struct channelInfo parseChannel(config_setting_t *, float);	// Parse channel configuration block from config file
 struct stackParms parseStack(config_t);	// Parse stack mode parameters from config file
 struct spimParms parseSpim(config_t);	// Parse SPIM mode parameters from config file
@@ -79,7 +79,7 @@ enum fluo_modes {		// Possible emission modes
     POINT,
     MULTI,
     LINE,
-    IMAGE,
+    RASTER,
     STACK,
     SPIM,
     ORBIT
@@ -125,7 +125,7 @@ struct lineParms {		// Linescan mode parameters
     const char *tiffname;
 };
 
-struct imageParms {		// Raster mode parameters
+struct rasterParms {		// Raster mode parameters
     double pixel, centerz, deadtime;
     int width, height;
     const char *tiffname;

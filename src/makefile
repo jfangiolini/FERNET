@@ -2,8 +2,8 @@ CC = gcc
 CLIBS = -lm -largtable2 -lconfig -ltiff
 CFLAGS = -Wall -std=gnu99 -pedantic
 
-fernet: fernet.o point.o multi.o line.o parseconfig.o image.o stack.o spim.o parseargs.o photons.o orbit.o fernet.h
-	$(CC) $(CFLAGS) -o fernet fernet.o multi.o point.o line.o image.o stack.o spim.o parseconfig.o parseargs.o photons.o orbit.o $(CLIBS)
+fernet: fernet.o point.o multi.o line.o parseconfig.o raster.o stack.o spim.o parseargs.o photons.o orbit.o fernet.h
+	$(CC) $(CFLAGS) -o fernet fernet.o multi.o point.o line.o raster.o stack.o spim.o parseconfig.o parseargs.o photons.o orbit.o $(CLIBS)
 
 point.o: point.c fernet.h
 	$(CC) $(CFLAGS) -c point.c
@@ -14,8 +14,8 @@ multi.o: multi.c fernet.h
 line.o: line.c fernet.h
 	$(CC) $(CFLAGS) -c line.c
 
-image.o: image.c fernet.h
-	$(CC) $(CFLAGS) -c image.c
+raster.o: raster.c fernet.h
+	$(CC) $(CFLAGS) -c raster.c
 
 stack.o: stack.c fernet.h
 	$(CC) $(CFLAGS) -c stack.c

@@ -37,7 +37,7 @@ struct args parseArgs(int argc, char **argv)
     struct arg_lit *help =
 	arg_lit0(NULL, "help", "print this help and exit");
     struct arg_str *mode =
-	arg_str1("m", "mode", "<point,multi,line,image>", "sampling mode");
+	arg_str1("m", "mode", "<point,multi,line,raster>", "sampling mode");
     struct arg_lit *version =
 	arg_lit0(NULL, "version", "print version information and exit");
     struct arg_end *end = arg_end(20);
