@@ -28,67 +28,70 @@
  ***********************************************************************************/
 int main(int argc, char *argv[])
 {
-    srand(time(NULL));		// randomize seed
+	srand(time(NULL));	// randomize seed
+	gsl_rng *r = gsl_rng_alloc(gsl_rng_taus);
+	gsl_rng_set(r, rand());
 
-    /* Parse arguments from command line */
-    struct args Args = parseArgs(argc, argv);
+	/* Parse arguments from command line */
+	struct args Args = parseArgs(argc, argv);
 
-    /* Get desired fluorescence mode */
-    enum fluo_modes desired_mode;
-    if (!strcmp(Args.mode, "point")) {
-	desired_mode = POINT;
-    } else if (!strcmp(Args.mode, "multi")) {
-	desired_mode = MULTI;
-    } else if (!strcmp(Args.mode, "line")) {
-	desired_mode = LINE;
-    } else if (!strcmp(Args.mode, "raster")) {
-	desired_mode = RASTER;
-    } else if (!strcmp(Args.mode, "stack")) {
-	desired_mode = STACK;
-    } else if (!strcmp(Args.mode, "spim")) {
-	desired_mode = SPIM;
-    } else if (!strcmp(Args.mode, "orbit")) {
-	desired_mode = ORBIT;
-    } else {
-	printf("Invalid mode. Type %s --help for usage\n", argv[0]);
-	exit(1);
-    }
+	/* Get desired fluorescence mode */
+	enum fluo_modes desired_mode;
+	if (!strcmp(Args.mode, "point")) {
+		desired_mode = POINT;
+	} else if (!strcmp(Args.mode, "multi")) {
+		desired_mode = MULTI;
+	} else if (!strcmp(Args.mode, "line")) {
+		desired_mode = LINE;
+	} else if (!strcmp(Args.mode, "raster")) {
+		desired_mode = RASTER;
+	} else if (!strcmp(Args.mode, "stack")) {
+		desired_mode = STACK;
+	} else if (!strcmp(Args.mode, "spim")) {
+		desired_mode = SPIM;
+	} else if (!strcmp(Args.mode, "orbit")) {
+		desired_mode = ORBIT;
+	} else {
+		printf("Invalid mode. Type %s --help for usage\n", argv[0]);
+		exit(1);
+	}
 
-    /* Call fluorescence routine */
-    switch (desired_mode) {
-    case POINT:
-	pointRoutine(Args.cfg, Args.filename);
-	break;
+	/* Call fluorescence routine */
+	switch (desired_mode) {
+	case POINT:
+		pointRoutine(Args.cfg, Args.filename, r);
+		break;
 
-    case MULTI:
-	multiRoutine(Args.cfg, Args.filename);
-	break;
+	case MULTI:
+		multiRoutine(Args.cfg, Args.filename, r);
+		break;
 
-    case LINE:
-	lineRoutine(Args.cfg, Args.filename);
-	break;
+	case LINE:
+		lineRoutine(Args.cfg, Args.filename, r);
+		break;
 
-    case RASTER:
-	rasterRoutine(Args.cfg, Args.filename);
-	break;
+	case RASTER:
+		rasterRoutine(Args.cfg, Args.filename, r);
+		break;
 
-    case STACK:
-	stackRoutine(Args.cfg, Args.filename);
-	break;
+	case STACK:
+		stackRoutine(Args.cfg, Args.filename, r);
+		break;
 
-    case SPIM:
-	spimRoutine(Args.cfg, Args.filename);
-	break;
+	case SPIM:
+		spimRoutine(Args.cfg, Args.filename, r);
+		break;
 
-    case ORBIT:
-	orbitRoutine(Args.cfg, Args.filename);
-    }
+	case ORBIT:
+		orbitRoutine(Args.cfg, Args.filename, r);
+	}
 
-    /* Cleanup */
-    config_destroy(&Args.cfg);
-    printf("\n");
+	/* Cleanup */
+	config_destroy(&Args.cfg);
+	gsl_rng_free(r);
+	printf("\n");
 
-    return 0;
+	return 0;
 }
 
 /***********************************************************************************
@@ -96,21 +99,19 @@ int main(int argc, char *argv[])
  ***********************************************************************************/
 void parseError(char *variable)
 {
-    fprintf(stderr,
-	    "Invalid type or missing '%s' parameter in configuration file.\n",
-	    variable);
-    exit(1);
+	fprintf(stderr, "Invalid type or missing '%s' parameter in configuration file.\n", variable);
+	exit(1);
 }
 
 void printLogo()
 {
-    printf("                                                     \n");
-    printf("  ███████╗███████╗██████╗ ███╗   ██╗███████╗████████╗\n");
-    printf("  ██╔════╝██╔════╝██╔══██╗████╗  ██║██╔════╝╚══██╔══╝\n");
-    printf("  █████╗  █████╗  ██████╔╝██╔██╗ ██║█████╗     ██║   \n");
-    printf("  ██╔══╝  ██╔══╝  ██╔══██╗██║╚██╗██║██╔══╝     ██║   \n");
-    printf("  ██║     ███████╗██║  ██║██║ ╚████║███████╗   ██║   \n");
-    printf("  ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   \n");
-    printf("                                                     \n");
-    printf(" Fluorescence Emission Recipes and NumErical Toolkit \n");
+	printf("                                                     \n");
+	printf("  ███████╗███████╗██████╗ ███╗   ██╗███████╗████████╗\n");
+	printf("  ██╔════╝██╔════╝██╔══██╗████╗  ██║██╔════╝╚══██╔══╝\n");
+	printf("  █████╗  █████╗  ██████╔╝██╔██╗ ██║█████╗     ██║   \n");
+	printf("  ██╔══╝  ██╔══╝  ██╔══██╗██║╚██╗██║██╔══╝     ██║   \n");
+	printf("  ██║     ███████╗██║  ██║██║ ╚████║███████╗   ██║   \n");
+	printf("  ╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   \n");
+	printf("                                                     \n");
+	printf(" Fluorescence Emission Recipes and NumErical Toolkit \n");
 }

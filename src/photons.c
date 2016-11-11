@@ -27,36 +27,45 @@
  ***********************************************************************************/
 
 int gaussPSF(double x, double y, double z, double w_xy, double w_z,
-	     double sx, double sy, double sz, int nevents, double q)
+	     double sx, double sy, double sz, int nevents, double q, gsl_rng * r)
 {
-    double g, prob_abs, prob_emit;
-    int phot = 0;
+	double g, prob_abs, prob_emit;
+	int phot = 0;
 
-    g = exp(-2 * ((x - sx) * (x - sx) + (y - sy) * (y - sy)) /
-	    (w_xy * w_xy) - 2 * ((z - sz) * (z - sz)) / (w_z * w_z));
+	g = exp(-2 * ((x - sx) * (x - sx) + (y - sy) * (y - sy)) /
+		(w_xy * w_xy) - 2 * ((z - sz) * (z - sz)) / (w_z * w_z));
 
-    for (int i = 0; i < nevents; i++) {
-	prob_abs = 1.0 * rand() / RAND_MAX;
-	prob_emit = 1.0 * rand() / RAND_MAX;
-	if (g > prob_abs && prob_emit < q) {
-	    phot++;
+	for (int i = 0; i < nevents; i++) {
+		prob_abs = gsl_rng_uniform(r);
+		prob_emit = gsl_rng_uniform(r);
+		if (g > prob_abs && prob_emit < q) {
+			phot++;
+		}
 	}
-    }
-    return phot;
+	return phot;
 }
 
-int spimPSF(double z, double w_z, double sz, int nevents, double q)
+int spimPSF(double z, double w_z, double sz, int nevents, double q, gsl_rng * r)
 {
-    double g, prob_abs, prob_emit;
-    int phot = 0;
-    g = exp(-2 * ((z - sz) * (z - sz)) / (w_z * w_z));
+	double g, prob_abs, prob_emit;
+	int phot = 0;
+	g = exp(-2 * ((z - sz) * (z - sz)) / (w_z * w_z));
 
-    for (int i = 0; i < nevents; i++) {
-	prob_abs = 1.0 * rand() / RAND_MAX;
-	prob_emit = 1.0 * rand() / RAND_MAX;
-	if (g > prob_abs && prob_emit < q) {
-	    phot++;
+	for (int i = 0; i < nevents; i++) {
+		prob_abs = gsl_rng_uniform(r);
+		prob_emit = gsl_rng_uniform(r);
+		if (g > prob_abs && prob_emit < q) {
+			phot++;
+		}
 	}
-    }
-    return phot;
+	return phot;
+}
+
+int noiseGenerator(int photons, int noise_status, gsl_rng * r)
+{
+	int noise = 0;
+	if (noise_status) {
+		noise += gsl_ran_poisson(r, sqrt((double)photons)) + gsl_ran_gaussian_tail(r, 0, 1);
+	}
+	return noise;
 }

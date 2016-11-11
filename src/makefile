@@ -1,5 +1,5 @@
 CC = gcc
-CLIBS = -lm -largtable2 -lconfig -ltiff
+CLIBS = -lgsl -lgslcblas -lm -largtable2 -lconfig -ltiff
 CFLAGS = -Wall -std=gnu99 -pedantic
 
 fernet: fernet.o point.o multi.o line.o parseconfig.o raster.o stack.o spim.o parseargs.o photons.o orbit.o fernet.h
