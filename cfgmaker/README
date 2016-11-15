@@ -1,0 +1,3 @@
+For ease of use, copy CFGMaker.jar to your home and CFGMaker to
+/usr/local/bin (as sudo) to run CFGMaker from any folder. If CFGMaker.jar
+is not on your home folder change the path in CFGMaker. 
